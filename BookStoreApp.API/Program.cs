@@ -12,6 +12,18 @@ builder.Services.AddSwaggerGen();
 builder.Host.UseSerilog((ctx, lc) =>
     lc.WriteTo.Console().ReadFrom.Configuration(ctx.Configuration));
 
+//CORS configuration => Create policy to allow all origins, methods, and headers. This is useful for development and testing purposes,
+//  but in production, you should restrict it to specific origins for security reasons.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin().
+        AllowAnyMethod().
+        AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -22,6 +34,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
