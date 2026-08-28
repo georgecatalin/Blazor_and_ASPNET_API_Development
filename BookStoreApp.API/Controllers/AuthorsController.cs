@@ -10,34 +10,61 @@ public class AuthorsController : ControllerBase
 {
     private readonly BookStoreDbContext _context;
     private readonly IMapper _mapper;
-    public AuthorsController(BookStoreDbContext context, IMapper mapper)
+    private readonly ILogger<AuthorsController> _logger;
+    public AuthorsController(BookStoreDbContext context, IMapper mapper, ILogger<AuthorsController> logger)
     {
         _context = context;
         _mapper = mapper;
+        _logger = logger;
     }
 
     // GET: api/Author
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AuthorReadOnlyDTO>>> GetAuthor()
     {
-        var authors = await _context.Authors.ToListAsync();
-        var authorReadOnlyDTOs = _mapper.Map<List<AuthorReadOnlyDTO>>(authors);
-        return Ok(authorReadOnlyDTOs);
+        _logger.LogInformation($"Received GET request at {nameof(GetAuthor)}");
+
+        try
+        {
+            var authors = await _context.Authors.ToListAsync();
+            var authorReadOnlyDTOs = _mapper.Map<List<AuthorReadOnlyDTO>>(authors);
+            return Ok(authorReadOnlyDTOs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error when executing GET request at {nameof(GetAuthor)}");
+            return StatusCode(500, "There was an error when completing your request. Come back later");
+
+        }
+
+        
     }
 
     // GET: api/Author/5
     [HttpGet("{id}")]
     public async Task<ActionResult<AuthorReadOnlyDTO>> GetAuthor(int id)
     {
-        var author = await _context.Authors.FindAsync(id);
-
-        if (author == null)
+        try
         {
-            return NotFound();
+            var author = await _context.Authors.FindAsync(id);
+
+            if (author == null)
+            {
+                _logger.LogWarning($"Error upon execution of GET request on {nameof(GetAuthor)}for {id}. Found no match.");
+                return NotFound();
+            }
+
+            var authorDTO = _mapper.Map<AuthorReadOnlyDTO>(author);
+            return Ok(authorDTO);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error when executing GET request for {nameof(GetAuthor)}");
+            return BadRequest("Bad request");
         }
 
-        var authorDTO = _mapper.Map<AuthorReadOnlyDTO>(author);
-        return Ok(authorDTO);
+
+       
     }
 
     // PUT: api/Author/5
