@@ -30,9 +30,12 @@ public class BooksController : ControllerBase
 
     // GET: api/Book/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Book>> GetBook(int id)
+    public async Task<ActionResult<BookDetailsDTO>> GetBook(int id)
     {
-        var book = await _context.Books.FindAsync(id);
+        var book = await _context.Books.
+            Include(q => q.Author).
+            ProjectTo<BookDetailsDTO>(_imapper.ConfigurationProvider).
+            FirstOrDefaultAsync(q => q.id == id);
 
         if (book == null)
         {
@@ -45,12 +48,21 @@ public class BooksController : ControllerBase
     // PUT: api/Book/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutBook(int? id, Book book)
+    public async Task<IActionResult> PutBook(int? id, BookUpdateDTO bookDTO)
     {
-        if (id != book.Id)
+        if (id != bookDTO.id)
         {
             return BadRequest();
         }
+
+        var book = await _context.Books.FindAsync(id);
+
+        if(book == null)
+        {
+            return NotFound();
+        }
+
+        _imapper.Map(bookDTO, book);
 
         _context.Entry(book).State = EntityState.Modified;
 
@@ -60,7 +72,7 @@ public class BooksController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!BookExists(id))
+            if (!await BookExists(id))
             {
                 return NotFound();
             }
@@ -76,12 +88,13 @@ public class BooksController : ControllerBase
     // POST: api/Book
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Book>> PostBook(Book book)
+    public async Task<ActionResult<Book>> PostBook(BookCreateDTO bookDTO)
     {
+        var book = _imapper.Map<Book>(bookDTO); 
         _context.Books.Add(book);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetBook", new { id = book.Id }, book);
+        return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
     }
 
     // DELETE: api/Book/5
@@ -100,8 +113,8 @@ public class BooksController : ControllerBase
         return NoContent();
     }
 
-    private bool BookExists(int? id)
+    private async Task<bool> BookExists(int? id)
     {
-        return _context.Books.Any(e => e.Id == id);
+        return await _context.Books.AnyAsync(e => e.Id == id);
     }
 }

@@ -13,11 +13,18 @@ namespace BookStoreApp.API.Configurations
             CreateMap<AuthorUpdateDTO, Author>().ReverseMap();
             CreateMap<AuthorReadOnlyDTO, Author>().ReverseMap();
 
-            CreateMap<BookReadOnlyDTO, Book>().ReverseMap();
+
+
+            CreateMap<BookCreateDTO, Book>().ReverseMap();
+            CreateMap<BookUpdateDTO, Book>().ReverseMap();
             CreateMap<Book, BookReadOnlyDTO>()
                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => 
                 src.Author !=null ? $"{src.Author.FirstName}-{src.Author.LastName}" : String.Empty))
                 .ReverseMap();
+           CreateMap<Book, BookDetailsDTO>()
+                .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src =>
+                 src.Author != null ? $"{src.Author.FirstName}-{src.Author.LastName}" : String.Empty))
+                 .ReverseMap();
         }
     }
 }
