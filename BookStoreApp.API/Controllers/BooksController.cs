@@ -20,7 +20,7 @@ public class BooksController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BookReadOnlyDTO>>> GetBook()
     {
-        var book = await _context.Books.ToListAsync();
+        var book = await _context.Books.Include(q=>q.Author).ToListAsync();
         var bookDTO = _imapper.Map<IEnumerable<BookReadOnlyDTO>>(book);
         return Ok(bookDTO);
     }

@@ -14,6 +14,10 @@ namespace BookStoreApp.API.Configurations
             CreateMap<AuthorReadOnlyDTO, Author>().ReverseMap();
 
             CreateMap<BookReadOnlyDTO, Book>().ReverseMap();
+            CreateMap<Book, BookReadOnlyDTO>()
+                .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => 
+                src.Author !=null ? $"{src.Author.FirstName}-{src.Author.LastName}" : String.Empty))
+                .ReverseMap();
         }
     }
 }
