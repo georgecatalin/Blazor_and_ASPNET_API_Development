@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using BookStoreApp.API.Data;
 using BookStoreApp.API.Models.Book;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -20,9 +21,11 @@ public class BooksController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BookReadOnlyDTO>>> GetBook()
     {
-        var book = await _context.Books.Include(q=>q.Author).ToListAsync();
-        var bookDTO = _imapper.Map<IEnumerable<BookReadOnlyDTO>>(book);
-        return Ok(bookDTO);
+        var book = await _context.Books.
+            Include(q => q.Author).
+            ProjectTo<BookReadOnlyDTO>(_imapper.ConfigurationProvider).
+            ToListAsync();
+        return Ok(book);
     }
 
     // GET: api/Book/5
