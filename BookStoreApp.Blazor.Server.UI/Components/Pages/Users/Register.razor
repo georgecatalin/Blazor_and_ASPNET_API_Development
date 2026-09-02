@@ -4,7 +4,12 @@
 @inject NavigationManager navigationManager
 
 <h3>Register New Account </h3>
-
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-danger" role="alert">
+        @message
+    </div>
+}
 
 <div>
     <EditForm Model="RegistrationModel" OnValidSubmit="HandleRegistration" FormName="registerForm">
