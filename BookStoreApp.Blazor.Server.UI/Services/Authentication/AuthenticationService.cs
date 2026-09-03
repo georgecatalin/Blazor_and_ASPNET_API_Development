@@ -1,5 +1,7 @@
 ﻿using Blazored.LocalStorage;
+using BookStoreApp.Blazor.Server.UI.Providers;
 using BookStoreApp.Blazor.Server.UI.Services.Base;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace BookStoreApp.Blazor.Server.UI.Services.Authentication
 {
@@ -7,10 +9,12 @@ namespace BookStoreApp.Blazor.Server.UI.Services.Authentication
     {
         private readonly IClient _httpClient;
         private readonly ILocalStorageService _localStorage;
-        public AuthenticationService(IClient httpClient, ILocalStorageService localStorage)
+        private readonly AuthenticationStateProvider _authenticationStateProvider;
+        public AuthenticationService(IClient httpClient, ILocalStorageService localStorage, AuthenticationStateProvider authenticationStateProvider)
         {
             this._httpClient = httpClient;
             this._localStorage = localStorage;
+            this._authenticationStateProvider = authenticationStateProvider;
         }
         public async Task<bool> AuthenticateAsync(LoginUserDTO userDTO )
         {
@@ -27,8 +31,7 @@ namespace BookStoreApp.Blazor.Server.UI.Services.Authentication
                 await _localStorage.SetItemAsync("authenticationToken", response.Token);
 
                 //Change authentication state of application
-
-
+                await ((ApiAuthenticationStateProvider)_authenticationStateProvider).LoggedIn();
 
                 return true;
             }
