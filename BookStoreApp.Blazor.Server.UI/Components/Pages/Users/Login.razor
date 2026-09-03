@@ -1,5 +1,5 @@
 ﻿@page "/users/login"
-@using BookStoreApp.Blazor.Server.UI.Services.Base
+@inject IAuthenticationService authenticationService
 @inject NavigationManager navigationManager
 
 
@@ -38,7 +38,14 @@
     {
         try
         {
-            var response = await 
+            var response = await authenticationService.AuthenticateAsync(LoginModel);
+
+            if(response)
+            {
+                
+            }
+
+            message = "Invalid login attempt. Please check your credentials and try again."; 
         }
         catch (ApiException ex)
         {

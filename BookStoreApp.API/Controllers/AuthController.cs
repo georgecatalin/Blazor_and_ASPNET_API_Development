@@ -73,7 +73,7 @@ namespace BookStoreApp.API.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(LoginUserDTO loginUserDTO)
+        public async Task<ActionResult<LoginResponse>> Login(LoginUserDTO loginUserDTO)
         {
             logger.LogInformation($"Login attempt from {loginUserDTO.Email}");
 
@@ -89,7 +89,7 @@ namespace BookStoreApp.API.Controllers
 
                 string tokenString = await GenerateToken(user);
 
-                var response = new
+                var response = new LoginResponse()
                 {
                     Token = tokenString,
                     UserDetails = new AuthResponse
