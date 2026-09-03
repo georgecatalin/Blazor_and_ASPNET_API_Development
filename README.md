@@ -4,7 +4,7 @@ Markdown
 
 A full-stack web application developed as part of hands-on practice, experimentation, and rework for the Udemy course **[End-to-End ASP.NET Core 3.1 API and Blazor Development](https://www.udemy.com/course/end-to-end-aspnet-core-31-api-and-blazor-development/)** by Trevoir Williams.
 
-## 🚀 Key Features Covered
+##  Key Features Covered
 
 ### Backend (ASP.NET Core Web API)
 
@@ -59,10 +59,3 @@ Before running the solution, ensure the following are installed:
 dotnet tool install --global dotnet-ef
 
 ```
-
-
-
-```
-
-```
----
