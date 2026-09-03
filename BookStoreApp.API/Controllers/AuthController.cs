@@ -101,7 +101,7 @@ namespace BookStoreApp.API.Controllers
                     }
                 };
 
-                return Accepted(response);
+                return Ok(response);
 
             }
             catch (Exception ex)

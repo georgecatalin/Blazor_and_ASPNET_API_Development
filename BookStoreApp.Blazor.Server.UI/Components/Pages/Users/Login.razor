@@ -18,7 +18,7 @@
 
         <div class="form-group">
             <label for="Password">Password</label>
-            <InputText id="Password" class="form-control" typeof="password" @bind-Value="LoginModel.Password" />
+            <InputText id="Password" class="form-control" type="password" @bind-Value="LoginModel.Password" />
             <ValidationMessage For="@(() => LoginModel.Password)" />
         </div>
         <br />
@@ -42,7 +42,9 @@
 
             if(response)
             {
-                
+                message = string.Empty;
+                navigationManager.NavigateTo("/", forceLoad: false);
+                return;
             }
 
             message = "Invalid login attempt. Please check your credentials and try again."; 
