@@ -41,7 +41,7 @@ namespace BookStoreApp.Blazor.Server.UI.Providers
 
             return new AuthenticationState(new ClaimsPrincipal(user));
         }
-    }
+    
 
     public async Task LoggedIn()
         {
